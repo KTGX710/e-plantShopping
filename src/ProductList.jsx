@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
+import addItem from './CartSlice';
+
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
+    const [addedToCart, setAddedToCart] = useState({}); // State to control the availability of products after adding to cart
 
     const plantsArray = [
         {
@@ -252,6 +255,15 @@ function ProductList({ onHomeClick }) {
         e.preventDefault();
         setShowCart(false);
     };
+
+    const handleAddToCart = (plant) => {
+        dispatchEvent(addItem(plant));
+        setAddedToCart((prevState) => ({
+            ...prevState,
+            [plant.name]: true,
+        }));
+    };
+
     return (
         <div>
             <div className="navbar" style={styleObj}>
@@ -274,7 +286,22 @@ function ProductList({ onHomeClick }) {
             </div>
             {!showCart ? (
                 <div className="product-grid">
-
+                    {plantsArray.map((section, index) => (
+                        <div key={index}>
+                            <h2 className="plant_heading">{section.category}</h2>
+                            <div className="product-list">
+                                {section.plants.map((plant, plantIndex) => (
+                                    <div key={plantIndex} className="product-card">
+                                        <h3 className="product-name">{plant.name}</h3>
+                                        <img src={plant.image} alt={plant.name} className="product-image" />
+                                        <p className="product-cost">{plant.cost}</p>
+                                        <p className="product-description">{plant.description}</p>
+                                        <button className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
 
                 </div>
             ) : (
