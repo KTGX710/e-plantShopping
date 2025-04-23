@@ -7,7 +7,6 @@ import { addItem } from './CartSlice';
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-    const [addedToCart, setAddedToCart] = useState({}); // State to control the availability of products after adding to cart
     const cart = useSelector(state => state.cart.items)
     const dispatch = useDispatch();
 
@@ -261,10 +260,6 @@ function ProductList({ onHomeClick }) {
 
     const handleAddToCart = (plant) => {
         dispatch(addItem(plant));
-        setAddedToCart((prevState) => ({
-            ...prevState, [plant.name]: true,
-        }));
-        console.log(addedToCart);
     };
 
     const cartCount = cart.reduce((totalItems, item) => totalItems + item.quantity, 0);
@@ -302,10 +297,11 @@ function ProductList({ onHomeClick }) {
                                         <img src={plant.image} alt={plant.name} className="product-image" />
                                         <p className="product-price">{plant.cost}</p>
                                         <p className="product-title">{plant.description}</p>
-                                        {addedToCart[plant.name] ? 
-                                        <button className="product-button added-to-cart" disabled>Added to Cart</button> :
-                                        <button className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
-                                        }
+                                        {cart.find(item => item.name === plant.name) ? (
+                                            <button className="product-button added-to-cart" disabled>Added to Cart</button>
+                                        ) : (
+                                            <button className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                        )}
                                     </div>
                                 ))}
                             </div>
